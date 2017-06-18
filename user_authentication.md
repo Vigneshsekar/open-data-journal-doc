@@ -319,7 +319,7 @@ And appropriately for the actions defined, we shall define the routes.
       resources "/sessions", SessionController, only: [:new, :create, :delete]
     end
 
-But if we look at our routes more carefully, the whole application is accessible to anyone. To implement authentication we need to make necessary changes to the routes. That stands as our first step to implement authenticate users.
+But if we look at our routes more carefully, the whole application is accessible to anyone. To implement authentication we need to make necessary changes to the routes. That will stand as our first step in authenticating user requests.
 
 We should have noticed the default :browser pipleline in the routes file. Along with it, we shall be adding few more. With our changes, our routes file will look like the following.
 
@@ -363,7 +363,7 @@ It makes more sense now. We demand the user to be logged in to access the user-s
 > Guardian.Plug.LoadResource: 
   The LoadResource plug looks in the subfield of the token fetches the resource from the Serializer and makes it available via Guardian.Plug.current_resource(conn)
 
-Now, we shall create the login form for the user to log in and then create a session.
+Now, we shall create the login form for the user to log in and then create their own session.
 
     #web/controllers/session_controller.ex
 
@@ -404,7 +404,7 @@ And a view and its corresponding template.
       </div>
     </div>
 
-As we can see, on this form to log in will attempt to create a session as mentioned in it. We shall now define the create action in the session controller.
+As we can see in the above form we are attempting to create a session as mentioned in it. We shall now define the create action in the session controller.
 
     #web/controllers/session_controller.ex
 
@@ -453,7 +453,7 @@ We recently created an auth directory, right? We shall have our login logic insi
       end
     end
 
-So far, we seem to have handled things rightly. Guardian came handy to sign_in and create a session and also comeonin came in handy again to decrypt and check the password that is hashed by comeonin and stored in our database.
+So far, we seem to have handled things rightly. Guardian came handy to sign_in and create a session and also comeonin came handy again to decrypt and check the password that is hashed by comeonin earlier and stored in our database.
 
 Shall we move to sign out part of it, now?
 
@@ -468,7 +468,7 @@ The delete action gets defined as the first step which in fact does all the work
       |> redirect(to: page_path(conn, :index))
     end
 
-Do you prefer to also move this single line "Guardian.Plug.sign_out" to the auth directory and call it here by its function name? We are keeping this here for now.
+Do you prefer to also move this single line "Guardian.Plug.sign_out" to the auth directory and call it here by its function name? May be that would be more appropriate. But, We are keeping this here for now.
 
 We also need to change the state of the sign in and sign out buttons as we proceed further.
 
@@ -488,7 +488,7 @@ At this point, we have to check if a user is logged in and act accordingly. In f
       end
     end
 
-This plug just gets current_resource from a Guardian token and assigns it as property to our connection. So, now we can access signed in user through @current_user variable (connection assignment).
+This plug just gets current_resource from a Guardian token and assigns it as a property to our connection. So, now we can access signed in user through @current_user variable (connection assignment).
 
 But we need to integrate it in our project. Where shall we call this and get the current_user assigned? A good place to do it may be the :with_session pipeline that we have defined in our routes.
 
@@ -518,6 +518,6 @@ We will now head back to sign in/sign out option switches. When the current user
           class: "" %></li>
     <% end %>
 
-With this, we have successfully implemented ***simple*** user authentication in our project. 
+With this, we have successfully implemented ***simple*** user authentication in our project. As a basic requirement, after sign-in the user should be able to make a submission. We will look into that in our next post.
 
 
